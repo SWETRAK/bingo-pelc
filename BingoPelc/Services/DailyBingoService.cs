@@ -11,17 +11,19 @@ public class DailyBingoService: IDailyBingoService
 {
     private readonly DomainContextDb _dbContext;
     private readonly IMapper _mapper;
+    private readonly ILogger _logger;
     
-    public DailyBingoService(DomainContextDb dbContext, IMapper mapper)
+    public DailyBingoService(DomainContextDb dbContext, IMapper mapper, ILogger logger)
     {
         _dbContext = dbContext;
         _mapper = mapper;
+        _logger = logger;
     }
     
     // TODO: Check if that works properly
-    public async Task GenerateDailyQuestions(string userIdString)
+    public async Task<DailyBingoDto> GenerateDailyQuestions(string userIdString)
     {
-        if (!Guid.TryParse(userIdString, out var userIdGuid)) throw new Exception();
+        if (!Guid.TryParse(userIdString, out var userIdGuid)) throw new IncorrectGuidException();
         
         var questions = await _dbContext.Questions.OrderBy(g => Guid.NewGuid()).Take(25).ToListAsync();
 
@@ -45,6 +47,10 @@ public class DailyBingoService: IDailyBingoService
 
         await _dbContext.DailyBingos.AddAsync(dailyBingo);
         await _dbContext.SaveChangesAsync();
+        
+        var result = _mapper.Map<DailyBingoDto>(dailyBingo);
+        return result; 
+        
     }
 
     // TODO: Test this logic

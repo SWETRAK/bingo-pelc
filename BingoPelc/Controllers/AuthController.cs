@@ -2,6 +2,7 @@ using BingoPelc.Authentication;
 using BingoPelc.Configs;
 using BingoPelc.Models;
 using BingoPelc.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BingoPelc.Controllers;
@@ -58,5 +59,13 @@ public class AuthController: Controller
                 Expires = DateTime.Now.AddDays(_authenticationSettings.JwtExpireDays)
             });
         return Ok(result.Item1);
+    }
+
+    [Authorize]
+    [HttpDelete("logout")]
+    public ActionResult<bool> LogoutUserWithPassword()
+    {
+        Response.Cookies.Delete("X-Access-Token");
+        return Ok(true);
     }
 }
