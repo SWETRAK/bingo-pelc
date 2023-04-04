@@ -1,6 +1,7 @@
 using BingoPelc.Authentication;
 using BingoPelc.Models;
 using BingoPelc.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BingoPelc.Controllers;
@@ -20,6 +21,7 @@ public class DailyQuestionController: Controller
         _dailyQuestionService = dailyQuestionService;
     }
 
+    [Authorize]
     [HttpPut]
     public async Task<ActionResult<DailyQuestionDto>> ChangeDailyQuestionStatus([FromBody] DailyQuestionDto dailyQuestionDto)
     {

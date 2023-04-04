@@ -11,9 +11,9 @@ public class DailyBingoService: IDailyBingoService
 {
     private readonly DomainContextDb _dbContext;
     private readonly IMapper _mapper;
-    private readonly ILogger _logger;
+    private readonly ILogger<DailyBingoService> _logger;
     
-    public DailyBingoService(DomainContextDb dbContext, IMapper mapper, ILogger logger)
+    public DailyBingoService(DomainContextDb dbContext, IMapper mapper, ILogger<DailyBingoService> logger)
     {
         _dbContext = dbContext;
         _mapper = mapper;

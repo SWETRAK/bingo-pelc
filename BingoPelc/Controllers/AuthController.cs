@@ -12,11 +12,11 @@ namespace BingoPelc.Controllers;
 public class AuthController: Controller
 {
     private readonly IAuthService _authService;
-    private readonly ILogger _logger;
+    private readonly ILogger<AuthController> _logger;
     private readonly AuthenticationSettings _authenticationSettings;
 
     public AuthController(
-        ILogger logger, 
+        ILogger<AuthController> logger, 
         IAuthService authenticationService, 
         AuthenticationSettings authenticationSettings)
     {
@@ -25,6 +25,7 @@ public class AuthController: Controller
         _authenticationSettings = authenticationSettings;
     }
 
+    [Authorize]
     [HttpGet("info")]
     public async Task<ActionResult<UserInfoDto>> GetLoggedUserInfo()
     {

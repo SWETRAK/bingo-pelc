@@ -3,6 +3,8 @@ using BingoPelc.Authentication;
 using BingoPelc.Authorization;
 using BingoPelc.Services;
 
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
