@@ -7,6 +7,7 @@ using BingoPelc.Entities;
 using BingoPelc.Exceptions;
 using BingoPelc.Models;
 using BingoPelc.Services.Interfaces;
+using BingoPelc.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -36,13 +37,13 @@ public class AuthService: IAuthService
         _mapper = mapper;
     }
 
-    public async Task<(UserInfoDto, string)> GetUserInfo(string guideId)
+    public async Task<(UserInfoDto, string)> GetUserInfo(string userIdString)
     {
-        if (!Guid.TryParse(guideId, out var guideIdGuid)) throw new IncorrectGuidException();
+        var userIdGuid = GuidUtil.ParseGuidFromString(userIdString);
 
-        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == guideIdGuid);
+        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userIdGuid);
         
-        if (user is null) throw new UserNotFoundException(guideIdGuid.ToString());
+        if (user is null) throw new UserNotFoundException(userIdGuid.ToString());
         
         var token = GenerateJwtToken(user);
         var userInfoDto = _mapper.Map<UserInfoDto>(user);

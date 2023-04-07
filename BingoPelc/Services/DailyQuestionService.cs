@@ -1,6 +1,7 @@
 using AutoMapper;
 using BingoPelc.Models;
 using BingoPelc.Services.Interfaces;
+using BingoPelc.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace BingoPelc.Services;
@@ -18,10 +19,10 @@ public class DailyQuestionService: IDailyQuestionService
 
     public async Task<DailyQuestionDto> CheckDailyQuestion(string userIdString, DailyQuestionDto incommingDailyQuestionDto)
     {
-        if (!Guid.TryParse(userIdString, out var userIdGuid)) throw new Exception();
-        if (!Guid.TryParse(incommingDailyQuestionDto.Id, out var questionIdGuid)) throw new Exception();
-
-        var question = await _dbContext.DailyQuestions.Where(q => q.Id == questionIdGuid).FirstOrDefaultAsync();
+        var userIdGuid = GuidUtil.ParseGuidFromString(userIdString);
+        var questionIdGuid = GuidUtil.ParseGuidFromString(incommingDailyQuestionDto.Id);
+        
+        var question = await _dbContext.DailyQuestions.Where(q => q.Id == questionIdGuid ).FirstOrDefaultAsync();
 
         if (question is null) throw new Exception();
         question.Checked = !question.Checked;

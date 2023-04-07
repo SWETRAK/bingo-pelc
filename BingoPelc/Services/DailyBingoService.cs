@@ -3,6 +3,7 @@ using BingoPelc.Entities;
 using BingoPelc.Exceptions;
 using BingoPelc.Models;
 using BingoPelc.Services.Interfaces;
+using BingoPelc.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace BingoPelc.Services;
@@ -20,17 +21,15 @@ public class DailyBingoService: IDailyBingoService
         _logger = logger;
     }
     
-    // TODO: Add logic checking if logic exists
     public async Task<DailyBingoDto> GenerateDailyQuestions(string userIdString)
     {
-        if (!Guid.TryParse(userIdString, out var userIdGuid)) throw new IncorrectGuidException();
+        var userIdGuid = GuidUtil.ParseGuidFromString(userIdString);
 
         var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userIdGuid);
         if (user is null) throw new UserNotFoundException();
 
         var dailCount = await _dbContext.DailyBingos.CountAsync(db => db.Date.Equals(DateTime.Today));
         if (dailCount > 0) return await GetDailyBingo(userIdString);
-        
         
         var questions = await _dbContext.Questions.OrderBy(g => Guid.NewGuid()).Take(25).ToListAsync();
         var dailyBingo = new DailyBingo
@@ -60,7 +59,7 @@ public class DailyBingoService: IDailyBingoService
     
     public async Task<DailyBingoDto> GetDailyBingo(string userIdString)
     {
-        if (!Guid.TryParse(userIdString, out var userIdGuid)) throw new IncorrectGuidException();
+        var userIdGuid = GuidUtil.ParseGuidFromString(userIdString);
 
         var dailyBingo = await _dbContext.DailyBingos
             .Include(u => u.DailyQuestions)
@@ -76,5 +75,10 @@ public class DailyBingoService: IDailyBingoService
         return result; 
     }
     
-    // TODO: Add endpoint which check and tell who win who win that
+    // TODO: Add endpoint which check and tell who win
+
+    public Task CheckIfWin(string userIdString)
+    {
+        return null;
+    }
 }
