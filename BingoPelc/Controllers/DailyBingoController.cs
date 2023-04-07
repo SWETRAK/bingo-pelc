@@ -35,7 +35,7 @@ public class DailyBingoController: Controller
     public async  Task<ActionResult<DailyBingoDto>> GenerateDailyBingo()
     {
         var userGuidId = AuthenticationHelper.GetUserIdFromAuthCookie(User);
-        var dailyGuide = await _dailyBingoService.GenerateDailyQuestions(userGuidId);
+        var dailyGuide = await _dailyBingoService.GenerateDailyBingo(userGuidId);
 
         return Ok(dailyGuide);
     }
