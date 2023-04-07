@@ -17,10 +17,10 @@ public class DailyQuestionService: IDailyQuestionService
         _mapper = mapper;
     }
 
-    public async Task<DailyQuestionDto> CheckDailyQuestion(string userIdString, DailyQuestionDto incommingDailyQuestionDto)
+    public async Task<DailyQuestionDto> CheckDailyQuestion(string userIdString, DailyQuestionDto incomingDailyQuestionDto)
     {
         var userIdGuid = GuidUtil.ParseGuidFromString(userIdString);
-        var questionIdGuid = GuidUtil.ParseGuidFromString(incommingDailyQuestionDto.Id);
+        var questionIdGuid = GuidUtil.ParseGuidFromString(incomingDailyQuestionDto.Id);
         
         var question = await _dbContext.DailyQuestions.Where(q => q.Id == questionIdGuid ).FirstOrDefaultAsync();
 

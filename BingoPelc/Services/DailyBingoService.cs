@@ -22,11 +22,12 @@ public class DailyBingoService: IDailyBingoService
     }
     
     /// <summary>
-    /// Generates daily bingo for user if it doesn't exists, if exist it gets from database
+    /// Method generates daily bingo for user if not exists.
+    /// If it exists it returns already existing daily bingo from database 
     /// </summary>
     /// <param name="userIdString">User id in string form</param>
-    /// <returns>Data with daily bingo for specific user</returns>
-    /// <exception cref="UserNotFoundException">Throws exception if daily question is not found for user</exception>
+    /// <returns>DailyBingo object with data for specific user</returns>
+    /// <exception cref="UserNotFoundException">Throws exception if user string guid is incorrect</exception>
     public async Task<DailyBingoDto> GenerateDailyBingo(string userIdString)
     {
         var userIdGuid = GuidUtil.ParseGuidFromString(userIdString);
@@ -39,27 +40,25 @@ public class DailyBingoService: IDailyBingoService
         var dailyBingo = dailCount > 0 ? 
             await GetDailyBingo(userIdGuid, DateTime.Now) : 
             await GenerateDailyBingoForUser(user);
-        
         var result = _mapper.Map<DailyBingoDto>(dailyBingo);
         return result;
     }
     
     /// <summary>
-    /// Function to get daily bingo from database for specyfic user
+    /// Function to get daily bingo from database for specific user
     /// </summary>
     /// <param name="userIdString">User id in string form</param>
-    /// <returns>Data with daily bingo for specific user</returns>
+    /// <returns>DailyBingo object with data for specific user</returns>
     /// <exception cref="NoDailyQuestionException">Throws exception if daily question is not found for user</exception>
+    /// <exception cref="UserNotFoundException">Throws exception if user string guid is incorrect</exception>
     public async Task<DailyBingoDto> GetDailyBingo(string userIdString)
     {
         var userIdGuid = GuidUtil.ParseGuidFromString(userIdString);
 
         var dailyBingo = await GetDailyBingo(userIdGuid, DateTime.Now);
-
         if (dailyBingo is null) throw new NoDailyQuestionException();
-
         dailyBingo.DailyQuestions = dailyBingo.DailyQuestions.OrderBy(dq => dq.Index);
-
+        _logger.LogInformation("Daily question was taken database for user {UserId}", userIdGuid.ToString());
         var result = _mapper.Map<DailyBingoDto>(dailyBingo);
         return result; 
     }
@@ -96,6 +95,7 @@ public class DailyBingoService: IDailyBingoService
 
         await _dbContext.DailyBingos.AddAsync(dailyBingo);
         await _dbContext.SaveChangesAsync();
+        _logger.LogInformation("Daily bingo for user {UserId} in {Date} created", user.Id.ToString(), DateTime.Now.ToString("yy-MM-dd"));
         return dailyBingo;
     }
 }
