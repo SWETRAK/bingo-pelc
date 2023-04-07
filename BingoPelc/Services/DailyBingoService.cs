@@ -20,17 +20,23 @@ public class DailyBingoService: IDailyBingoService
         _logger = logger;
     }
     
-    // TODO: Check if that works properly
+    // TODO: Add logic checking if logic exists
     public async Task<DailyBingoDto> GenerateDailyQuestions(string userIdString)
     {
         if (!Guid.TryParse(userIdString, out var userIdGuid)) throw new IncorrectGuidException();
+
+        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userIdGuid);
+        if (user is null) throw new UserNotFoundException();
+
+        var dailCount = await _dbContext.DailyBingos.CountAsync(db => db.Date.Equals(DateTime.Today));
+        if (dailCount > 0) return await GetDailyBingo(userIdString);
+        
         
         var questions = await _dbContext.Questions.OrderBy(g => Guid.NewGuid()).Take(25).ToListAsync();
-
         var dailyBingo = new DailyBingo
         {
             Date = DateTime.Today,
-            UserId = userIdGuid
+            User = user
         };
         
         var dailyQuestions = questions
@@ -38,22 +44,20 @@ public class DailyBingoService: IDailyBingoService
                 {
                     Question = q,
                     Checked = false,
-                    Index = index,
+                    Index = index + 1,
                     DailyBingo = dailyBingo,
                 })
             .ToList();
-
+        
         dailyBingo.DailyQuestions = dailyQuestions;
 
         await _dbContext.DailyBingos.AddAsync(dailyBingo);
         await _dbContext.SaveChangesAsync();
         
         var result = _mapper.Map<DailyBingoDto>(dailyBingo);
-        return result; 
-        
+        return result;
     }
-
-    // TODO: Test this logic
+    
     public async Task<DailyBingoDto> GetDailyBingo(string userIdString)
     {
         if (!Guid.TryParse(userIdString, out var userIdGuid)) throw new IncorrectGuidException();
@@ -66,7 +70,11 @@ public class DailyBingoService: IDailyBingoService
 
         if (dailyBingo is null) throw new NoDailyQuestionException();
 
+        dailyBingo.DailyQuestions = dailyBingo.DailyQuestions.OrderBy(dq => dq.Index);
+
         var result = _mapper.Map<DailyBingoDto>(dailyBingo);
         return result; 
     }
+    
+    // TODO: Add endpoint which check and tell who win who win that
 }

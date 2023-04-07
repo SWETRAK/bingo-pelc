@@ -1,3 +1,5 @@
+using BingoPelc.Migrations;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -19,5 +21,20 @@ public class UserEntityConfiguration: IEntityTypeConfiguration<User>
         builder.Property(u => u.Nickname)
             .IsRequired()
             .HasMaxLength(20);
+        
+        builder.HasData(AddPassword("kamilpietrak123@gmail.com", "SWETRAK", "Ssmr1234"));
+    }
+
+    private static User AddPassword(string email, string nickname, string password)
+    {
+        var passwordHasher = new PasswordHasher<User>();
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            Email = email,
+            Nickname = nickname,
+        };
+        user.HashedPassword = passwordHasher.HashPassword(user, password);
+        return user;
     }
 }

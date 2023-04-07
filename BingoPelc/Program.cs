@@ -1,6 +1,7 @@
 using BingoPelc;
 using BingoPelc.Authentication;
 using BingoPelc.Authorization;
+using BingoPelc.Middlewares;
 using BingoPelc.Services;
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
@@ -12,6 +13,9 @@ builder.Services.AddDbContext<DomainContextDb>();
 
 // Load services
 builder.Services.AddServices();
+
+// Load Middlewares
+builder.Services.AddMiddlewares();
 
 // Load authentication
 builder.Services.AddAuthenticationCustom(builder);
@@ -44,6 +48,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddlewares();
 
 app.UseAuthentication();
 

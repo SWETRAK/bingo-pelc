@@ -1,13 +1,14 @@
 using BingoPelc.Exceptions;
 
-namespace BingoPelc.MIddlewares;
+namespace BingoPelc.Middlewares;
 
+// TODO: Add response body for errors 
 public class ErrorMiddleware: IMiddleware
 {
 
-    private readonly ILogger _logger;
+    private readonly ILogger<ErrorMiddleware> _logger;
     
-    public ErrorMiddleware(ILogger logger)
+    public ErrorMiddleware(ILogger<ErrorMiddleware> logger)
     {
         _logger = logger;
     }

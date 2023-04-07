@@ -50,6 +50,24 @@ public class AuthService: IAuthService
         return (userInfoDto, token);
     }
     
+    // public (UserInfoDto, string) CreateUser(RegisterUserWithPasswordDto registerUserWithPasswordDto )
+    // {
+    //     var newUser = _mapper.Map<User>(registerUserWithPasswordDto);
+    //
+    //     var hashedPassword = _passwordHasher.HashPassword(newUser, registerUserWithPasswordDto.Password);
+    //     newUser.HashedPassword = hashedPassword;
+    //
+    //     _dbContext.Users.Add(newUser);
+    //     _dbContext.SaveChanges();
+    //     _logger.LogInformation("User created with {NewUserEmail} at {S}", newUser.Email, DateTime.Now.ToString("yyyy-MMMM-dd h:mm:ss tt zz"));
+    //
+    //     var userInfoDto = _mapper.Map<UserInfoDto>(newUser);
+    //     var token = GenerateJwtToken(newUser);
+    //
+    //     _logger.LogInformation("User {NewUserEmail} logged in at {S}", newUser.Email, DateTime.Now.ToString("yyyy-MMMM-dd h:mm:ss tt zz"));
+    //     return (userInfoDto, token);
+    // }
+    
     public async Task<(UserInfoDto, string)> LoginUser(LoginUserWithPasswordDto userDto)
     {
         var user = await _dbContext

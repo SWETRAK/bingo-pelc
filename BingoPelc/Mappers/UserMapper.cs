@@ -2,7 +2,7 @@ using AutoMapper;
 using BingoPelc.Entities;
 using BingoPelc.Models;
 
-namespace BingoPelc.Mappings;
+namespace BingoPelc.Mappers;
 
 public class UserMapper: Profile
 {
