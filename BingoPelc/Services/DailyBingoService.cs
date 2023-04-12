@@ -38,7 +38,7 @@ public class DailyBingoService: IDailyBingoService
         var dailCount = await _dbContext.DailyBingos.CountAsync(db => db.Date.Equals(DateTime.Today));
         
         var dailyBingo = dailCount > 0 ? 
-            await GetDailyBingo(userIdGuid, DateTime.Now) : 
+            await GetDailyBingo(userIdGuid, DateTime.Today) : 
             await GenerateDailyBingoForUser(user);
         var result = _mapper.Map<DailyBingoDto>(dailyBingo);
         return result;
@@ -55,12 +55,32 @@ public class DailyBingoService: IDailyBingoService
     {
         var userIdGuid = GuidUtil.ParseGuidFromString(userIdString);
 
-        var dailyBingo = await GetDailyBingo(userIdGuid, DateTime.Now);
+        var dailyBingo = await GetDailyBingo(userIdGuid, DateTime.Today);
         if (dailyBingo is null) throw new NoDailyQuestionException();
         dailyBingo.DailyQuestions = dailyBingo.DailyQuestions.OrderBy(dq => dq.Index);
         _logger.LogInformation("Daily question was taken database for user {UserId}", userIdGuid.ToString());
         var result = _mapper.Map<DailyBingoDto>(dailyBingo);
         return result; 
+    }
+
+    /// <summary>
+    /// Method checking if someone win bingo
+    /// </summary>
+    /// <param name="userIdString">User guid id in string format</param>
+    /// <returns>DailyBingoDto with checked data </returns>
+    public async Task<DailyBingoDto> CheckDailyBingo(string userIdString)
+    {
+        var userIdGuid = GuidUtil.ParseGuidFromString(userIdString);
+
+        var dailyBingo = await GetDailyBingo(userIdGuid, DateTime.Today);
+        dailyBingo.DailyQuestions = dailyBingo.DailyQuestions.OrderBy(dq => dq.Index);
+
+        dailyBingo = CheckDailyBingoAlgorithm(dailyBingo);
+
+        _dbContext.DailyBingos.Update(dailyBingo);
+        await _dbContext.SaveChangesAsync();
+
+        return _mapper.Map<DailyBingoDto>(dailyBingo);
     }
 
     private async Task<DailyBingo> GetDailyBingo(Guid userId, DateTime dateTime)
@@ -95,7 +115,69 @@ public class DailyBingoService: IDailyBingoService
 
         await _dbContext.DailyBingos.AddAsync(dailyBingo);
         await _dbContext.SaveChangesAsync();
-        _logger.LogInformation("Daily bingo for user {UserId} in {Date} created", user.Id.ToString(), DateTime.Now.ToString("yy-MM-dd"));
+        _logger.LogInformation(
+            "Daily bingo for user {UserId} in {Date} created", 
+            user.Id.ToString(), 
+            DateTime.Now.ToString("yy-MM-dd"));
+        return dailyBingo;
+    }
+
+    private DailyBingo CheckDailyBingoAlgorithm(DailyBingo dailyBingo)
+    {
+        var dailyBingoDailyQuestions = 
+            dailyBingo.DailyQuestions as DailyQuestion[] ?? 
+            dailyBingo.DailyQuestions.ToArray();
+
+        var win = false;
+        
+        for (uint i = 0; i < 5; i++)
+        {
+            if (
+                dailyBingoDailyQuestions[0 + 5 * i].Checked &&
+                dailyBingoDailyQuestions[1 + 5 * i].Checked &&
+                dailyBingoDailyQuestions[2 + 5 * i].Checked &&
+                dailyBingoDailyQuestions[3 + 5 * i].Checked &&
+                dailyBingoDailyQuestions[4 + 5 * i].Checked
+            )
+            {
+                win = true;
+            }
+
+            if (
+                dailyBingoDailyQuestions[0 + i].Checked &&
+                dailyBingoDailyQuestions[5 + i].Checked &&
+                dailyBingoDailyQuestions[10 + i].Checked &&
+                dailyBingoDailyQuestions[15 + i].Checked &&
+                dailyBingoDailyQuestions[20 + i].Checked
+            )
+            {
+                win = true;
+            }
+        }
+
+        if (
+            dailyBingoDailyQuestions[0].Checked &&
+            dailyBingoDailyQuestions[6].Checked &&
+            dailyBingoDailyQuestions[12].Checked &&
+            dailyBingoDailyQuestions[18].Checked &&
+            dailyBingoDailyQuestions[24].Checked
+        )
+        {
+            win = true;
+        }
+        
+        if (
+            dailyBingoDailyQuestions[4].Checked &&
+            dailyBingoDailyQuestions[8].Checked &&
+            dailyBingoDailyQuestions[12].Checked &&
+            dailyBingoDailyQuestions[16].Checked &&
+            dailyBingoDailyQuestions[20].Checked
+        )
+        {
+            win = true;
+        }
+
+        dailyBingo.Win = win;
         return dailyBingo;
     }
 }

@@ -10,4 +10,6 @@ public class DailyBingo
     public virtual IEnumerable<DailyQuestion> DailyQuestions { get; set; }
 
     public DateTime Date { get; set; }
+
+    public bool Win { get; set; }
 }

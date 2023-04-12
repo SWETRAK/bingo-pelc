@@ -39,4 +39,14 @@ public class DailyBingoController: Controller
 
         return Ok(dailyGuide);
     }
+
+    [Authorize]
+    [HttpGet("win")]
+    public async Task<ActionResult<DailyBingoDto>> CheckDailyBingo()
+    {
+        var userGuidId = AuthenticationHelper.GetUserIdFromAuthCookie(User);
+        var dailyBingo = await _dailyBingoService.CheckDailyBingo(userGuidId);
+
+        return Ok(dailyBingo);
+    }
 }

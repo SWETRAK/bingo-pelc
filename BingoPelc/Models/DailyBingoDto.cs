@@ -7,4 +7,6 @@ public class DailyBingoDto
     public IEnumerable<DailyQuestionDto> DailyQuestions { get; set; }
 
     public DateTime Date { get; set; }
+
+    public bool Win { get; set; }
 }

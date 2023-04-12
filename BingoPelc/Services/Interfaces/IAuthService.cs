@@ -6,4 +6,5 @@ public interface IAuthService
 {
     Task<(UserInfoDto, string)> GetUserInfo(string guideId);
     Task<(UserInfoDto, string)> LoginUser(LoginUserWithPasswordDto userDto);
+    Task<UserInfoDto> CreateUser(RegisterUserWithPasswordDto registerUserWithPasswordDto);
 }

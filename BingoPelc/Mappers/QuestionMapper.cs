@@ -11,7 +11,8 @@ public class QuestionMapper: Profile
         CreateMap<DailyBingo, DailyBingoDto>()
             .ForMember(dbd => dbd.Id, opt => opt.MapFrom(db => db.Id.ToString()))
             .ForMember(dbd => dbd.Date, opt => opt.MapFrom(db => db.Date))
-            .ForMember(dbd => dbd.DailyQuestions, opt => opt.MapFrom(db => db.DailyQuestions));
+            .ForMember(dbd => dbd.DailyQuestions, opt => opt.MapFrom(db => db.DailyQuestions))
+            .ForMember(dbd => dbd.Win, opt => opt.MapFrom(db => db.Win));
 
         CreateMap<DailyQuestion, DailyQuestionDto>()
             .ForMember(dqd => dqd.Id, opt => opt.MapFrom(db => db.Id.ToString()))

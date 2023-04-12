@@ -10,7 +10,11 @@ public class DailyBingoEntityConfiguration: IEntityTypeConfiguration<DailyBingo>
         builder.ToTable("daily_bingo");
 
         builder.Property(db => db.Date)
-            .HasDefaultValue(DateTime.Now)
+            .HasDefaultValue(DateTime.Today)
+            .IsRequired();
+
+        builder.Property(db => db.Win)
+            .HasDefaultValue(false)
             .IsRequired();
 
         builder.HasOne<User>(db => db.User)

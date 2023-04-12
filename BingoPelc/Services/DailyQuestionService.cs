@@ -1,4 +1,5 @@
 using AutoMapper;
+using BingoPelc.Exceptions;
 using BingoPelc.Models;
 using BingoPelc.Services.Interfaces;
 using BingoPelc.Utils;
@@ -17,6 +18,13 @@ public class DailyQuestionService: IDailyQuestionService
         _mapper = mapper;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="userIdString"></param>
+    /// <param name="incomingDailyQuestionDto"></param>
+    /// <returns></returns>
+    /// <exception cref="NoDailyQuestionException"></exception>
     public async Task<DailyQuestionDto> CheckDailyQuestion(string userIdString, DailyQuestionDto incomingDailyQuestionDto)
     {
         var userIdGuid = GuidUtil.ParseGuidFromString(userIdString);
@@ -24,7 +32,7 @@ public class DailyQuestionService: IDailyQuestionService
         
         var question = await _dbContext.DailyQuestions.Where(q => q.Id == questionIdGuid ).FirstOrDefaultAsync();
 
-        if (question is null) throw new Exception();
+        if (question is null) throw new NoDailyQuestionException();
         question.Checked = !question.Checked;
 
         _dbContext.DailyQuestions.Update(question);

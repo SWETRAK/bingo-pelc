@@ -3,6 +3,7 @@ using System;
 using BingoPelc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BingoPelc.Migrations
 {
     [DbContext(typeof(DomainContextDb))]
-    partial class DomainContextDbModelSnapshot : ModelSnapshot
+    [Migration("20230412071357_Added win field to DailyBingo")]
+    partial class AddedwinfieldtoDailyBingo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
