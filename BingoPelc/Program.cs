@@ -4,6 +4,7 @@ using BingoPelc.Authorization;
 using BingoPelc.Middlewares;
 using BingoPelc.Repositories;
 using BingoPelc.Services;
+using BingoPelc.Validators;
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
@@ -26,6 +27,9 @@ builder.Services.AddAuthenticationCustom(builder);
 
 // Load authorization
 builder.Services.AddAuthorizationCustom();
+
+// Load validators
+builder.Services.AddValidators();
 
 // Load controllers
 builder.Services.AddControllers();

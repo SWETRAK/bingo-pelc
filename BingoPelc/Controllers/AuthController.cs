@@ -65,7 +65,7 @@ public class AuthController: Controller
     [Authorize]
     [HttpPost("register")]
     public async Task<ActionResult<UserInfoDto>> RegisterUserWithEmailAndPassword(
-        [FromBody] RegisterUserWithPasswordDto registerUserWithPasswordDto)
+        [FromBody] RegisterUserWithPasswordDto registerUserWithPasswordDto ) 
     {
         var result = await _authService.CreateUser(registerUserWithPasswordDto);
         return Ok(result);

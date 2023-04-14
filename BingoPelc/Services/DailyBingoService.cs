@@ -122,7 +122,7 @@ public class DailyBingoService: IDailyBingoService
         return dailyBingo;
     }
 
-    private DailyBingo CheckDailyBingoAlgorithm(DailyBingo dailyBingo)
+    private static DailyBingo CheckDailyBingoAlgorithm(DailyBingo dailyBingo)
     {
         var dailyBingoDailyQuestions = 
             dailyBingo.DailyQuestions as DailyQuestion[] ?? 
