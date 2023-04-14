@@ -1,16 +1,14 @@
-using System.Runtime.CompilerServices;
 using BingoPelc.Models;
-using BingoPelc.Repositories;
+using BingoPelc.Repositories.Interfaces;
 using FluentValidation;
 
 namespace BingoPelc.Validators;
 
 public class RegisterWithPasswordDtoValidator: AbstractValidator<RegisterUserWithPasswordDto>
 {
-    private readonly UserRepository _userRepository;
-    
-    
-    public RegisterWithPasswordDtoValidator(UserRepository userRepository)
+    private readonly IUserRepository _userRepository;
+
+    public RegisterWithPasswordDtoValidator(IUserRepository userRepository)
     {
         _userRepository = userRepository;
         
